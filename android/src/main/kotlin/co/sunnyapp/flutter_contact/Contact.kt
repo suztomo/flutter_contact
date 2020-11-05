@@ -115,7 +115,7 @@ data class Contact(
         val phones: MutableList<Item> = mutableListOf(),
         val socialProfiles: MutableList<Item> = mutableListOf(),
         val urls: MutableList<Item> = mutableListOf(),
-        val dates: MutableList<Item> = mutableListOf(),
+        val dates: MutableList<ContactDate> = mutableListOf(),
 
         val postalAddresses: MutableList<PostalAddress> = mutableListOf(),
         /// read-only
@@ -181,7 +181,7 @@ data class Contact(
             "otherKeys" to mapOf("lookupKey" to keys?.lookupKey).filterValuesNotNull(),
             "socialProfiles" to socialProfiles.toItemMap(),
             "urls" to urls.toItemMap(),
-            "dates" to dates.toItemMap(),
+            "dates" to dates.toContactDateMap(),
             "linkedContactIds" to linkedContactIds,
             "postalAddresses" to postalAddresses.toAddressMap()
     ).filterValuesNotNull()
@@ -212,7 +212,7 @@ data class Contact(
                     emails = (map["emails"] as? StructList?).toItemList(),
                     phones = (map["phones"] as? StructList?).toItemList(),
                     socialProfiles = (map["socialProfiles"] as? StructList?).toItemList(),
-                    dates = (map["dates"] as? StructList?).toItemList(),
+                    dates = (map["dates"] as? StructList?).toContactDateList(),
                     urls = (map["urls"] as? StructList?).toItemList(),
                     postalAddresses = (map["postalAddresses"] as? StructList?).toPostalAddressList()
             )

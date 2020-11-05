@@ -155,7 +155,9 @@ interface ContactExtensions {
                 }
                 CommonDataKinds.Event.CONTENT_ITEM_TYPE -> {
                     cursor.string(CommonDataKinds.Event.START_DATE)?.also { eventDate ->
-                        contact.dates += Item(label = cursor.getEventLabel(), value = eventDate)
+                        val date = parseEventDate(eventDate)
+                        contact.dates += ContactDate(label = cursor.getEventLabel(), date = date)
+                        // contact.dates += Item(label = cursor.getEventLabel(), value = eventDate)
                     }
                 }
 
@@ -192,6 +194,30 @@ interface ContactExtensions {
             close();
         }
         return contactsById.values.toList()
+    }
+
+    fun parseEventDate(eventDate: String): DateComponents {
+        if (eventDate.get(0) == '-') {
+            // The year is '-'. E.g., "--12-31" -> ["", "", "12", "31"]
+            val yearMonthDay = eventDate.split('-')
+            if (yearMonthDay.size != 4) {
+                throw Exception("Unexpected event date format $eventDate. ${yearMonthDay} Length ${yearMonthDay.size}")
+            }
+            return DateComponents(
+                    year = null,
+                    month = yearMonthDay[2].toInt(),
+                    day = yearMonthDay[3].toInt())
+        } else {
+            val yearMonthDay = eventDate.split('-')
+            if (yearMonthDay.size != 3) {
+                throw Exception("Unexpected event date format $eventDate")
+            }
+            return DateComponents(
+                    month = yearMonthDay[1].toInt(),
+                    year = yearMonthDay[0].toInt(),
+                    day = yearMonthDay[2].toInt())
+
+        }
     }
 
 

@@ -151,27 +151,27 @@ abstract class FlutterContactPlugin() : ContactExtensions, EventChannel.StreamHa
                     .withValue(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE, address.postcode)
                     .withValue(ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY, address.country)
                     .build()
-
-            for (date in contact.dates) {
-                ops += ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE)
-                        .withValue(ContactsContract.CommonDataKinds.Event.TYPE, date.label?.toEventType())
-                        .withValue(ContactsContract.CommonDataKinds.Event.LABEL, date.label?.toEventType())
-                        .withValue(ContactsContract.CommonDataKinds.Event.START_DATE, date.value)
-                        .build()
-            }
-
-            for (url in contact.urls) {
-                ops += ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE)
-                        .withValue(ContactsContract.CommonDataKinds.Website.TYPE, url.label)
-                        .withValue(ContactsContract.CommonDataKinds.Website.URL, url.value)
-                        .build()
-            }
-
         }
+
+        for (date in contact.dates) {
+            ops += ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Event.TYPE, date.label?.toEventType())
+                    .withValue(ContactsContract.CommonDataKinds.Event.LABEL, date.label?.toEventType())
+                    .withValue(ContactsContract.CommonDataKinds.Event.START_DATE, date.date)
+                    .build()
+        }
+
+        for (url in contact.urls) {
+            ops += ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Website.TYPE, url.label)
+                    .withValue(ContactsContract.CommonDataKinds.Website.URL, url.value)
+                    .build()
+        }
+
 
         val saveResult = context.contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
         val contactId = saveResult.first().uri.lastPathSegment?.toLong()
@@ -293,7 +293,7 @@ abstract class FlutterContactPlugin() : ContactExtensions, EventChannel.StreamHa
                     .withValue(ContactsContract.Data.RAW_CONTACT_ID, contact.identifier?.toString())
                     .withValue(ContactsContract.CommonDataKinds.Event.TYPE, date.label?.toEventType())
                     .withValue(ContactsContract.CommonDataKinds.Event.LABEL, date.label?.toEventType())
-                    .withValue(ContactsContract.CommonDataKinds.Event.START_DATE, date.value)
+                    .withValue(ContactsContract.CommonDataKinds.Event.START_DATE, date.date)
                     .build()
         }
 
