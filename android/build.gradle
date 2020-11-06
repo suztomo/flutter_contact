@@ -44,4 +44,13 @@ dependencies {
     //Joda-Time is the de facto standard date and time library for Java. From Java SE 8 onwards, users are asked to migrate to java.time (JSR-310).
     implementation("joda-time:joda-time:2.10.6")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'androidx.test:core:1.0.0'
+    testImplementation "com.google.truth:truth:1.1"
+
+    // For the code run with Gradle test
+    implementation 'androidx.annotation:annotation:1.0.0'
+    implementation fileTree(dir: '/Users/suztomo/development/flutter/bin/cache/artifacts/engine/android-x86',
+            include: ['flutter.jar'])
 }

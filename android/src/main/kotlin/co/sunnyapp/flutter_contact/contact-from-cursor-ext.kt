@@ -196,30 +196,49 @@ interface ContactExtensions {
         return contactsById.values.toList()
     }
 
-    fun parseEventDate(eventDate: String): DateComponents {
-        if (eventDate.get(0) == '-') {
-            // The year is '-'. E.g., "--12-31" -> ["", "", "12", "31"]
-            val yearMonthDay = eventDate.split('-')
-            if (yearMonthDay.size != 4) {
-                throw Exception("Unexpected event date format $eventDate. ${yearMonthDay} Length ${yearMonthDay.size}")
-            }
-            return DateComponents(
-                    year = null,
-                    month = yearMonthDay[2].toInt(),
-                    day = yearMonthDay[3].toInt())
-        } else {
-            val yearMonthDay = eventDate.split('-')
-            if (yearMonthDay.size != 3) {
-                throw Exception("Unexpected event date format $eventDate")
-            }
-            return DateComponents(
-                    month = yearMonthDay[1].toInt(),
-                    year = yearMonthDay[0].toInt(),
-                    day = yearMonthDay[2].toInt())
+    companion object {
+        fun parseEventDate(eventDate: String): DateComponents {
+            try {
+                if (eventDate.contains('-')) {
+                    if (eventDate.get(0) == '-') {
+                        // The year is '-'. E.g., "--12-31" -> ["", "", "12", "31"]
+                        val yearMonthDay = eventDate.split('-')
+                        if (yearMonthDay.size != 4) {
+                            throw Exception("Unexpected event date format $eventDate. ${yearMonthDay} Length ${yearMonthDay.size}")
+                        }
+                        return DateComponents(
+                                year = null,
+                                month = yearMonthDay[2].toInt(),
+                                day = yearMonthDay[3].toInt())
+                    } else {
+                        val yearMonthDay = eventDate.split('-')
+                        if (yearMonthDay.size != 3) {
+                            throw Exception("Unexpected event date format $eventDate")
+                        }
+                        return DateComponents(
+                                month = yearMonthDay[1].toInt(),
+                                year = yearMonthDay[0].toInt(),
+                                day = yearMonthDay[2].toInt())
 
+                    }
+                } else {
+                    // YYYYMMDD
+                    if (eventDate.length != 8) {
+                        throw Exception("Unexpected event date format $eventDate. Length ${eventDate.length}")
+                    }
+                    val year = eventDate.substring(0, 4)
+                    val month = eventDate.substring(4, 6)
+                    val day = eventDate.substring(6, 8)
+                    return DateComponents(
+                            month = month.toInt(),
+                            year = year.toInt(),
+                            day = day.toInt())
+                }
+            } catch (e: NumberFormatException) {
+                throw Exception("Unexpected event date format in $eventDate: ${e.message}")
+            }
         }
     }
-
 
     fun getAvatarDataForContactIfAvailable(contactKeys: ContactKeys, highRes: Boolean = true): ByteArray? {
         val stream = resolver.openContactPhotoInputStream(contactKeys, highRes) ?: return null
@@ -307,4 +326,3 @@ fun ContentResolver.openContactPhotoInputStream(key: ContactKeys, preferHighres:
                 }
             }
 }
-
